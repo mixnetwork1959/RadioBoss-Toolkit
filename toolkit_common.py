@@ -13,6 +13,7 @@ LANGUAGES = {
     "de": "Deutsch",
     "nl": "Nederlands",
     "bg": "Български",
+    "ro": "Română",
 }
 
 
@@ -113,6 +114,21 @@ STRINGS = {
         "guide_missing": "Локалното ръководство не е намерено.",
         "scan_required": "Необходимо е сканиране", "scan_missing": "Файлът silence_report.csv не е намерен.\n\nПърво стартирайте Silence Scanner и проверете резултатите, преди да използвате Auto Cutter.",
         "cutter_title": "Стартиране на Auto Cutter?", "cutter_confirm": "Auto Cutter обработва файловете от отчета на Silence Scanner.\n\nПоследен отчет: {timestamp}\n\nПроверете текущия отчет. Оригиналните файлове няма да бъдат презаписани.\n\nДа се стартира ли Auto Cutter?",
+    },
+    "ro": {
+        "settings": "Setări", "language": "Limbă", "help": "Ajutor",
+        "user_guide": "Ghid de utilizare", "open_folder": "Deschide folderul Toolkit",
+        "about": "Despre RadioBOSS Toolkit", "tagline": "Instrumente de emisie și bibliotecă într-un singur loc",
+        "open": "Deschide", "scheduler": "Broadcast Scheduler",
+        "scheduler_desc": "Verifică programările RadioBOSS și publică un calendar public.",
+        "cleaner": "Library Cleaner", "cleaner_desc": "Curăță în siguranță baza de date și bibliotecile RadioBOSS.",
+        "scanner": "Silence Scanner", "scanner_desc": "Scanează fișierele audio pentru intro-uri lungi și outro-uri problematice.",
+        "cutter": "Auto Cutter", "cutter_desc": "Creează copii corectate dintr-un raport de scanare verificat.",
+        "portable": "Ediție portabilă", "not_found": "Programul nu a fost găsit",
+        "keep_folder": "Păstrați împreună întregul folder RadioBOSS Toolkit.",
+        "guide_missing": "Ghidul local de utilizare nu a fost găsit.",
+        "scan_required": "Este necesară o scanare", "scan_missing": "Fișierul silence_report.csv nu a fost găsit.\n\nRulați mai întâi Silence Scanner și verificați rezultatele înainte de a utiliza Auto Cutter.",
+        "cutter_title": "Porniți Auto Cutter?", "cutter_confirm": "Auto Cutter procesează fișierele din raportul Silence Scanner.\n\nUltimul raport: {timestamp}\n\nVerificați raportul curent. Fișierele originale nu vor fi suprascrise.\n\nPorniți Auto Cutter acum?",
     },
 }
 

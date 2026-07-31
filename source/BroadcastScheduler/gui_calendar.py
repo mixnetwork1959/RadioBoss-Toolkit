@@ -15,8 +15,8 @@ TOP = 35
 DAY_WIDTH = 210
 HOUR_HEIGHT = 220
 
-DAY_NAMES={"en":("Mon","Tue","Wed","Thu","Fri","Sat","Sun"),"de":("Mo","Di","Mi","Do","Fr","Sa","So"),"nl":("Ma","Di","Wo","Do","Vr","Za","Zo"),"bg":("Пон","Вт","Ср","Чет","Пет","Съб","Нед")}
-DIALOG={"en":("Yes","No","Event","Group","End","Conflict","Event Details"),"de":("Ja","Nein","Ereignis","Gruppe","Ende","Konflikt","Ereignisdetails"),"nl":("Ja","Nee","Gebeurtenis","Groep","Einde","Conflict","Gebeurtenisdetails"),"bg":("Да","Не","Събитие","Група","Край","Конфликт","Детайли за събитието")}
+DAY_NAMES={"en":("Mon","Tue","Wed","Thu","Fri","Sat","Sun"),"de":("Mo","Di","Mi","Do","Fr","Sa","So"),"nl":("Ma","Di","Wo","Do","Vr","Za","Zo"),"bg":("Пон","Вт","Ср","Чет","Пет","Съб","Нед"),"ro":("Lun","Mar","Mie","Joi","Vin","Sâm","Dum")}
+DIALOG={"en":("Yes","No","Event","Group","End","Conflict","Event Details"),"de":("Ja","Nein","Ereignis","Gruppe","Ende","Konflikt","Ereignisdetails"),"nl":("Ja","Nee","Gebeurtenis","Groep","Einde","Conflict","Gebeurtenisdetails"),"bg":("Да","Не","Събитие","Група","Край","Конфликт","Детайли за събитието"),"ro":("Da","Nu","Eveniment","Grup","Sfârșit","Conflict","Detalii eveniment")}
 
 
 

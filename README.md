@@ -1,5 +1,7 @@
 # RadioBOSS Toolkit
 
+Version 0.2.4
+
 A portable launcher for four independent RadioBOSS broadcast and library tools.
 
 ## Included tools
@@ -8,6 +10,16 @@ A portable launcher for four independent RadioBOSS broadcast and library tools.
 - RadioBOSS Library Cleaner
 - Silence Scanner
 - Auto Cutter
+
+## Languages
+
+- English
+- Deutsch
+- Nederlands
+- Български
+- Română
+
+Select the shared interface language under `Settings > Language`.
 
 SongSync is intentionally distributed separately because it normally runs unattended from a scheduled RadioBOSS event.
 

@@ -89,6 +89,22 @@ STRINGS = {
         "error": "Грешка",
         "finished": "{libraries} библиотеки, {tracks} песни, {orphans} осиротели записа",
     },
+    "ro": {
+        "settings": "Setări", "language": "Limbă", "help": "Ajutor",
+        "user_guide": "Ghid de utilizare", "open_folder": "Deschide folderul Toolkit",
+        "about": "Despre Library Cleaner",
+        "title": "RadioBOSS Library Cleaner v1.0.0",
+        "database": "Bază de date", "sqlite_file": "Fișier SQLite", "browse": "Răsfoire",
+        "scan": "Scanează bibliotecile", "clean": "Curăță intrările orfane",
+        "confirm_title": "Confirmă curățarea",
+        "confirm": "{orphans} intrări orfane vor fi eliminate din biblioteci.\n\nPiesele și fișierele audio rămân neschimbate. Continuați?",
+        "cleaned": "Au fost curățate {deleted} intrări. Copie de siguranță: {backup}",
+        "nothing": "Nu există intrări orfane.", "library": "Bibliotecă",
+        "entries": "Intrări", "orphans": "Orfane",
+        "ready": "Gata – mod de scanare, nimic nu va fi șters.",
+        "scanning": "Se verifică bibliotecile …", "error": "Eroare",
+        "finished": "{libraries} biblioteci, {tracks} piese, {orphans} intrări orfane",
+    },
 }
 
 

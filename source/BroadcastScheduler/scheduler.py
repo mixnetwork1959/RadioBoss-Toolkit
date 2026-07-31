@@ -21,7 +21,8 @@ START_TEXT = {
 "en":("RadioBOSS scheduler file required","Select the RadioBOSS scheduler profile you want to analyze.\n\nThe file can be named Admin.sdl or have the name of your RadioBOSS profile.","Select RadioBOSS scheduler profile","RadioBOSS scheduler profiles","All files"),
 "de":("RadioBOSS-Schedulerdatei erforderlich","Wähle das RadioBOSS-Schedulerprofil aus, das analysiert werden soll.\n\nDie Datei kann Admin.sdl heißen oder den Namen deines RadioBOSS-Profils tragen.","RadioBOSS-Schedulerprofil auswählen","RadioBOSS-Schedulerprofile","Alle Dateien"),
 "nl":("RadioBOSS-schedulerbestand vereist","Selecteer het RadioBOSS-schedulerprofiel dat je wilt analyseren.\n\nHet bestand kan Admin.sdl heten of de naam van je RadioBOSS-profiel hebben.","RadioBOSS-schedulerprofiel selecteren","RadioBOSS-schedulerprofielen","Alle bestanden"),
-"bg":("Необходим е файл на RadioBOSS Scheduler","Изберете профила на RadioBOSS Scheduler за анализ.\n\nФайлът може да се казва Admin.sdl или да носи името на вашия RadioBOSS профил.","Избор на RadioBOSS Scheduler профил","RadioBOSS Scheduler профили","Всички файлове")}
+"bg":("Необходим е файл на RadioBOSS Scheduler","Изберете профила на RadioBOSS Scheduler за анализ.\n\nФайлът може да се казва Admin.sdl или да носи името на вашия RadioBOSS профил.","Избор на RadioBOSS Scheduler профил","RadioBOSS Scheduler профили","Всички файлове"),
+"ro":("Este necesar fișierul RadioBOSS Scheduler","Selectați profilul RadioBOSS Scheduler pe care doriți să îl analizați.\n\nFișierul poate fi numit Admin.sdl sau poate avea numele profilului RadioBOSS.","Selectați profilul RadioBOSS Scheduler","Profiluri RadioBOSS Scheduler","Toate fișierele")}
 
 
 def choose_scheduler_file(settings):

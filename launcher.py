@@ -13,7 +13,7 @@ from tkinter import messagebox, ttk
 from toolkit_common import LANGUAGES, load_toolkit_settings, save_language, toolkit_root, tr
 
 
-VERSION = "0.2.3"
+VERSION = "0.2.4"
 
 
 def application_dir() -> Path:
