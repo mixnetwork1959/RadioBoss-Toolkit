@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{STATION_NAME}} – Program Schedule</title>
+
+    <link
+        rel="stylesheet"
+        href="public_schedule.css"
+    >
+</head>
+
+<body>
+
+    <main class="schedule-app">
+
+        <header class="schedule-header">
+
+            <div class="schedule-brand">
+
+                <div class="schedule-icon">
+                    📻
+                </div>
+
+                <div>
+                    <h1>{{STATION_NAME}}</h1>
+                    <p>{{STATION_TAGLINE}}</p>
+                </div>
+
+            </div>
+
+            <div class="schedule-week">
+                {{WEEK_LABEL}}
+            </div>
+
+        </header>
+
+        <section class="schedule-toolbar">
+
+            <div class="schedule-title">
+                Weekly Music Program
+            </div>
+
+            <div class="view-switcher">
+                <button
+                    class="view-button active"
+                    data-view="week"
+                >
+                    Week
+                </button>
+
+                <button
+                    class="view-button"
+                    data-view="day"
+                >
+                    Day
+                </button>
+            </div>
+
+        </section>
+
+        <section
+            id="schedule-message"
+            class="schedule-message"
+            hidden
+        ></section>
+
+        <section
+            id="schedule-week-view"
+            class="schedule-week-grid"
+            aria-label="Weekly music schedule"
+        ></section>
+
+        <section
+            id="schedule-day-view"
+            class="schedule-day-list"
+            hidden
+            aria-label="Daily music schedule"
+        ></section>
+
+        <footer class="schedule-footer">
+            Schedule subject to change.
+        </footer>
+
+    </main>
+
+    <script src="public_schedule.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.spec
+build/
+dist/
+release/
+RadioBOSS Toolkit/
+
+settings.json
+toolkit_settings.json
+public_calendar.json
+silence_report.csv
+cut_report.csv
+*.sdl
+
+Music_Cut/
