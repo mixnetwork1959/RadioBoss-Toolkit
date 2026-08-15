@@ -7,131 +7,36 @@ import os
 import sys
 from pathlib import Path
 
-
-LANGUAGES = {
-    "en": "English",
-    "de": "Deutsch",
-    "nl": "Nederlands",
-    "bg": "Български",
-    "ro": "Română",
-}
-
+LANGUAGES = {"en":"English","de":"Deutsch","nl":"Nederlands","bg":"Български","ro":"Română"}
 
 def toolkit_root() -> Path:
-    configured = os.environ.get("RADIOBOSS_TOOLKIT_ROOT")
-    if configured:
-        return Path(configured)
-    if getattr(sys, "frozen", False):
-        executable_dir = Path(sys.executable).resolve().parent
-        if executable_dir.parent.name.lower() == "tools":
-            return executable_dir.parent.parent
+    configured=os.environ.get("RADIOBOSS_TOOLKIT_ROOT")
+    if configured: return Path(configured)
+    if getattr(sys,"frozen",False):
+        executable_dir=Path(sys.executable).resolve().parent
+        if executable_dir.parent.name.lower()=="tools": return executable_dir.parent.parent
         return executable_dir
     return Path(__file__).resolve().parent.parent
 
-
-def settings_path() -> Path:
-    return toolkit_root() / "toolkit_settings.json"
-
-
-def load_toolkit_settings() -> dict:
-    defaults = {"language": "en"}
+def settings_path()->Path: return toolkit_root()/"toolkit_settings.json"
+def load_toolkit_settings()->dict:
+    defaults={"language":"en"}
     try:
-        with settings_path().open("r", encoding="utf-8") as handle:
-            values = json.load(handle)
-        if isinstance(values, dict):
-            defaults.update(values)
-    except (OSError, ValueError):
-        pass
-    if defaults["language"] not in LANGUAGES:
-        defaults["language"] = "en"
+        with settings_path().open("r",encoding="utf-8") as handle: values=json.load(handle)
+        if isinstance(values,dict): defaults.update(values)
+    except (OSError,ValueError): pass
+    if defaults["language"] not in LANGUAGES: defaults["language"]="en"
     return defaults
 
+def save_language(language:str)->None:
+    settings=load_toolkit_settings(); settings["language"]=language if language in LANGUAGES else "en"
+    with settings_path().open("w",encoding="utf-8") as handle: json.dump(settings,handle,indent=2,ensure_ascii=False)
 
-def save_language(language: str) -> None:
-    settings = load_toolkit_settings()
-    settings["language"] = language if language in LANGUAGES else "en"
-    with settings_path().open("w", encoding="utf-8") as handle:
-        json.dump(settings, handle, indent=2, ensure_ascii=False)
+STRINGS={
+"en":{"settings":"Settings","language":"Language","help":"Help","user_guide":"User Guide","open_folder":"Open Toolkit Folder","about":"About RadioBOSS Toolkit","tagline":"Broadcast and library tools in one place","open":"Open","scheduler":"Broadcast Scheduler","scheduler_desc":"Check RadioBOSS schedules and publish a public calendar.","cleaner":"Library Cleaner","cleaner_desc":"Safely clean the RadioBOSS database and library files.","scanner":"Silence Scanner","scanner_desc":"Scan audio files for long intros and problematic outros.","cutter":"Auto Cutter","cutter_desc":"Create corrected copies from a reviewed scanner report.","songsync":"SongSync Engine","songsync_desc":"Synchronize the RadioBOSS music library and scheduler data for web apps and analytics.","sync_now":"Sync now","setup":"Setup","portable":"Portable edition","not_found":"Program not found","keep_folder":"Please keep the complete RadioBOSS Toolkit folder together.","guide_missing":"The local user guide could not be found.","scan_required":"Silence scan required","scan_missing":"No silence_report.csv was found.\n\nRun Silence Scanner first and review its results before using Auto Cutter.","cutter_title":"Start Auto Cutter?","cutter_confirm":"Auto Cutter processes the files listed in the Silence Scanner report.\n\nLast scan report: {timestamp}\n\nMake sure you have reviewed the current report. Original audio files are not overwritten.\n\nStart Auto Cutter now?"},
+"de":{"settings":"Einstellungen","language":"Sprache","help":"Hilfe","user_guide":"Benutzerhandbuch","open_folder":"Toolkit-Ordner öffnen","about":"Über RadioBOSS Toolkit","tagline":"Sende- und Bibliothekswerkzeuge an einem Ort","open":"Öffnen","scheduler":"Broadcast Scheduler","scheduler_desc":"RadioBOSS-Sendepläne prüfen und einen öffentlichen Kalender erstellen.","cleaner":"Library Cleaner","cleaner_desc":"RadioBOSS-Datenbank und Bibliotheken sicher bereinigen.","scanner":"Silence Scanner","scanner_desc":"Audiodateien auf lange Intros und problematische Outros prüfen.","cutter":"Auto Cutter","cutter_desc":"Korrigierte Kopien aus einem geprüften Scanbericht erstellen.","songsync":"SongSync Engine","songsync_desc":"RadioBOSS-Musikbibliothek und Scheduler-Daten für Web-Apps und Analytics synchronisieren.","sync_now":"Jetzt synchronisieren","setup":"Setup","portable":"Portable Ausgabe","not_found":"Programm nicht gefunden","keep_folder":"Bitte den vollständigen RadioBOSS-Toolkit-Ordner zusammenlassen.","guide_missing":"Das lokale Benutzerhandbuch wurde nicht gefunden.","scan_required":"Silence-Scan erforderlich","scan_missing":"Keine silence_report.csv gefunden.\n\nFühre zuerst den Silence Scanner aus und prüfe das Ergebnis, bevor du Auto Cutter verwendest.","cutter_title":"Auto Cutter starten?","cutter_confirm":"Auto Cutter verarbeitet die im Silence-Scanner-Bericht aufgeführten Dateien.\n\nLetzter Scanbericht: {timestamp}\n\nPrüfe den aktuellen Bericht. Originaldateien werden nicht überschrieben.\n\nAuto Cutter jetzt starten?"},
+"nl":{"settings":"Instellingen","language":"Taal","help":"Help","user_guide":"Gebruikershandleiding","open_folder":"Toolkit-map openen","about":"Over RadioBOSS Toolkit","tagline":"Uitzend- en bibliotheektools op één plek","open":"Openen","scheduler":"Broadcast Scheduler","scheduler_desc":"Controleer RadioBOSS-schema's en publiceer een openbare kalender.","cleaner":"Library Cleaner","cleaner_desc":"Ruim de RadioBOSS-database en bibliotheken veilig op.","scanner":"Silence Scanner","scanner_desc":"Scan audiobestanden op lange intro's en problematische outro's.","cutter":"Auto Cutter","cutter_desc":"Maak gecorrigeerde kopieën vanuit een gecontroleerd scanrapport.","songsync":"SongSync Engine","songsync_desc":"Synchroniseer de RadioBOSS-muziekbibliotheek en schedulergegevens voor webapps en analytics.","sync_now":"Nu synchroniseren","setup":"Instellen","portable":"Draagbare editie","not_found":"Programma niet gevonden","keep_folder":"Houd de volledige RadioBOSS Toolkit-map bij elkaar.","guide_missing":"De lokale gebruikershandleiding is niet gevonden.","scan_required":"Silencescan vereist","scan_missing":"Geen silence_report.csv gevonden.\n\nVoer eerst Silence Scanner uit en controleer de resultaten voordat je Auto Cutter gebruikt.","cutter_title":"Auto Cutter starten?","cutter_confirm":"Auto Cutter verwerkt de bestanden uit het Silence Scanner-rapport.\n\nLaatste scannerrapport: {timestamp}\n\nControleer het actuele rapport. Originele bestanden worden niet overschreven.\n\nAuto Cutter nu starten?"},
+"bg":{"settings":"Настройки","language":"Език","help":"Помощ","user_guide":"Ръководство","open_folder":"Отваряне на папката","about":"За RadioBOSS Toolkit","tagline":"Инструменти за излъчване и библиотека на едно място","open":"Отвори","scheduler":"Broadcast Scheduler","scheduler_desc":"Проверка на графиците и публикуване на публичен календар.","cleaner":"Library Cleaner","cleaner_desc":"Безопасно почистване на базата данни и библиотеките.","scanner":"Silence Scanner","scanner_desc":"Сканиране за дълги интрота и проблемни аутрота.","cutter":"Auto Cutter","cutter_desc":"Създаване на коригирани копия от проверен отчет.","songsync":"SongSync Engine","songsync_desc":"Синхронизиране на музикалната библиотека и scheduler данните на RadioBOSS за уеб приложения и анализи.","sync_now":"Синхронизирай","setup":"Настройка","portable":"Преносимо издание","not_found":"Програмата не е намерена","keep_folder":"Запазете цялата папка на RadioBOSS Toolkit.","guide_missing":"Локалното ръководство не е намерено.","scan_required":"Необходимо е сканиране","scan_missing":"Файлът silence_report.csv не е намерен.\n\nПърво стартирайте Silence Scanner и проверете резултатите, преди да използвате Auto Cutter.","cutter_title":"Стартиране на Auto Cutter?","cutter_confirm":"Auto Cutter обработва файловете от отчета на Silence Scanner.\n\nПоследен отчет: {timestamp}\n\nПроверете текущия отчет. Оригиналните файлове няма да бъдат презаписани.\n\nДа се стартира ли Auto Cutter?"},
+"ro":{"settings":"Setări","language":"Limbă","help":"Ajutor","user_guide":"Ghid de utilizare","open_folder":"Deschide folderul Toolkit","about":"Despre RadioBOSS Toolkit","tagline":"Instrumente de emisie și bibliotecă într-un singur loc","open":"Deschide","scheduler":"Broadcast Scheduler","scheduler_desc":"Verifică programările RadioBOSS și publică un calendar public.","cleaner":"Library Cleaner","cleaner_desc":"Curăță în siguranță baza de date și bibliotecile RadioBOSS.","scanner":"Silence Scanner","scanner_desc":"Scanează fișierele audio pentru intro-uri lungi și outro-uri problematice.","cutter":"Auto Cutter","cutter_desc":"Creează copii corectate dintr-un raport de scanare verificat.","songsync":"SongSync Engine","songsync_desc":"Sincronizează biblioteca muzicală RadioBOSS și datele schedulerului pentru aplicații web și analiză.","sync_now":"Sincronizează acum","setup":"Configurare","portable":"Ediție portabilă","not_found":"Programul nu a fost găsit","keep_folder":"Păstrați împreună întregul folder RadioBOSS Toolkit.","guide_missing":"Ghidul local de utilizare nu a fost găsit.","scan_required":"Este necesară o scanare","scan_missing":"Fișierul silence_report.csv nu a fost găsit.\n\nRulați mai întâi Silence Scanner și verificați rezultatele înainte de a utiliza Auto Cutter.","cutter_title":"Porniți Auto Cutter?","cutter_confirm":"Auto Cutter procesează fișierele din raportul Silence Scanner.\n\nUltimul raport: {timestamp}\n\nVerificați raportul curent. Fișierele originale nu vor fi suprascrise.\n\nPorniți Auto Cutter acum?"}}
 
-
-STRINGS = {
-    "en": {
-        "settings": "Settings", "language": "Language", "help": "Help",
-        "user_guide": "User Guide", "open_folder": "Open Toolkit Folder",
-        "about": "About RadioBOSS Toolkit", "tagline": "Broadcast and library tools in one place",
-        "open": "Open", "scheduler": "Broadcast Scheduler",
-        "scheduler_desc": "Check RadioBOSS schedules and publish a public calendar.",
-        "cleaner": "Library Cleaner", "cleaner_desc": "Safely clean the RadioBOSS database and library files.",
-        "scanner": "Silence Scanner", "scanner_desc": "Scan audio files for long intros and problematic outros.",
-        "cutter": "Auto Cutter", "cutter_desc": "Create corrected copies from a reviewed scanner report.",
-        "portable": "Portable edition", "not_found": "Program not found",
-        "keep_folder": "Please keep the complete RadioBOSS Toolkit folder together.",
-        "guide_missing": "The local user guide could not be found.",
-        "scan_required": "Silence scan required", "scan_missing": "No silence_report.csv was found.\n\nRun Silence Scanner first and review its results before using Auto Cutter.",
-        "cutter_title": "Start Auto Cutter?", "cutter_confirm": "Auto Cutter processes the files listed in the Silence Scanner report.\n\nLast scan report: {timestamp}\n\nMake sure you have reviewed the current report. Original audio files are not overwritten.\n\nStart Auto Cutter now?",
-    },
-    "de": {
-        "settings": "Einstellungen", "language": "Sprache", "help": "Hilfe",
-        "user_guide": "Benutzerhandbuch", "open_folder": "Toolkit-Ordner öffnen",
-        "about": "Über RadioBOSS Toolkit", "tagline": "Sende- und Bibliothekswerkzeuge an einem Ort",
-        "open": "Öffnen", "scheduler": "Broadcast Scheduler",
-        "scheduler_desc": "RadioBOSS-Sendepläne prüfen und einen öffentlichen Kalender erstellen.",
-        "cleaner": "Library Cleaner", "cleaner_desc": "RadioBOSS-Datenbank und Bibliotheken sicher bereinigen.",
-        "scanner": "Silence Scanner", "scanner_desc": "Audiodateien auf lange Intros und problematische Outros prüfen.",
-        "cutter": "Auto Cutter", "cutter_desc": "Korrigierte Kopien aus einem geprüften Scanbericht erstellen.",
-        "portable": "Portable Ausgabe", "not_found": "Programm nicht gefunden",
-        "keep_folder": "Bitte den vollständigen RadioBOSS-Toolkit-Ordner zusammenlassen.",
-        "guide_missing": "Das lokale Benutzerhandbuch wurde nicht gefunden.",
-        "scan_required": "Silence-Scan erforderlich", "scan_missing": "Keine silence_report.csv gefunden.\n\nFühre zuerst den Silence Scanner aus und prüfe das Ergebnis, bevor du Auto Cutter verwendest.",
-        "cutter_title": "Auto Cutter starten?", "cutter_confirm": "Auto Cutter verarbeitet die im Silence-Scanner-Bericht aufgeführten Dateien.\n\nLetzter Scanbericht: {timestamp}\n\nPrüfe den aktuellen Bericht. Originaldateien werden nicht überschrieben.\n\nAuto Cutter jetzt starten?",
-    },
-    "nl": {
-        "settings": "Instellingen", "language": "Taal", "help": "Help",
-        "user_guide": "Gebruikershandleiding", "open_folder": "Toolkit-map openen",
-        "about": "Over RadioBOSS Toolkit", "tagline": "Uitzend- en bibliotheektools op één plek",
-        "open": "Openen", "scheduler": "Broadcast Scheduler",
-        "scheduler_desc": "Controleer RadioBOSS-schema's en publiceer een openbare kalender.",
-        "cleaner": "Library Cleaner", "cleaner_desc": "Ruim de RadioBOSS-database en bibliotheken veilig op.",
-        "scanner": "Silence Scanner", "scanner_desc": "Scan audiobestanden op lange intro's en problematische outro's.",
-        "cutter": "Auto Cutter", "cutter_desc": "Maak gecorrigeerde kopieën vanuit een gecontroleerd scanrapport.",
-        "portable": "Draagbare editie", "not_found": "Programma niet gevonden",
-        "keep_folder": "Houd de volledige RadioBOSS Toolkit-map bij elkaar.",
-        "guide_missing": "De lokale gebruikershandleiding is niet gevonden.",
-        "scan_required": "Silencescan vereist", "scan_missing": "Geen silence_report.csv gevonden.\n\nVoer eerst Silence Scanner uit en controleer de resultaten voordat je Auto Cutter gebruikt.",
-        "cutter_title": "Auto Cutter starten?", "cutter_confirm": "Auto Cutter verwerkt de bestanden uit het Silence Scanner-rapport.\n\nLaatste scannerrapport: {timestamp}\n\nControleer het actuele rapport. Originele bestanden worden niet overschreven.\n\nAuto Cutter nu starten?",
-    },
-    "bg": {
-        "settings": "Настройки", "language": "Език", "help": "Помощ",
-        "user_guide": "Ръководство", "open_folder": "Отваряне на папката",
-        "about": "За RadioBOSS Toolkit", "tagline": "Инструменти за излъчване и библиотека на едно място",
-        "open": "Отвори", "scheduler": "Broadcast Scheduler",
-        "scheduler_desc": "Проверка на графиците и публикуване на публичен календар.",
-        "cleaner": "Library Cleaner", "cleaner_desc": "Безопасно почистване на базата данни и библиотеките.",
-        "scanner": "Silence Scanner", "scanner_desc": "Сканиране за дълги интрота и проблемни аутрота.",
-        "cutter": "Auto Cutter", "cutter_desc": "Създаване на коригирани копия от проверен отчет.",
-        "portable": "Преносимо издание", "not_found": "Програмата не е намерена",
-        "keep_folder": "Запазете цялата папка на RadioBOSS Toolkit.",
-        "guide_missing": "Локалното ръководство не е намерено.",
-        "scan_required": "Необходимо е сканиране", "scan_missing": "Файлът silence_report.csv не е намерен.\n\nПърво стартирайте Silence Scanner и проверете резултатите, преди да използвате Auto Cutter.",
-        "cutter_title": "Стартиране на Auto Cutter?", "cutter_confirm": "Auto Cutter обработва файловете от отчета на Silence Scanner.\n\nПоследен отчет: {timestamp}\n\nПроверете текущия отчет. Оригиналните файлове няма да бъдат презаписани.\n\nДа се стартира ли Auto Cutter?",
-    },
-    "ro": {
-        "settings": "Setări", "language": "Limbă", "help": "Ajutor",
-        "user_guide": "Ghid de utilizare", "open_folder": "Deschide folderul Toolkit",
-        "about": "Despre RadioBOSS Toolkit", "tagline": "Instrumente de emisie și bibliotecă într-un singur loc",
-        "open": "Deschide", "scheduler": "Broadcast Scheduler",
-        "scheduler_desc": "Verifică programările RadioBOSS și publică un calendar public.",
-        "cleaner": "Library Cleaner", "cleaner_desc": "Curăță în siguranță baza de date și bibliotecile RadioBOSS.",
-        "scanner": "Silence Scanner", "scanner_desc": "Scanează fișierele audio pentru intro-uri lungi și outro-uri problematice.",
-        "cutter": "Auto Cutter", "cutter_desc": "Creează copii corectate dintr-un raport de scanare verificat.",
-        "portable": "Ediție portabilă", "not_found": "Programul nu a fost găsit",
-        "keep_folder": "Păstrați împreună întregul folder RadioBOSS Toolkit.",
-        "guide_missing": "Ghidul local de utilizare nu a fost găsit.",
-        "scan_required": "Este necesară o scanare", "scan_missing": "Fișierul silence_report.csv nu a fost găsit.\n\nRulați mai întâi Silence Scanner și verificați rezultatele înainte de a utiliza Auto Cutter.",
-        "cutter_title": "Porniți Auto Cutter?", "cutter_confirm": "Auto Cutter procesează fișierele din raportul Silence Scanner.\n\nUltimul raport: {timestamp}\n\nVerificați raportul curent. Fișierele originale nu vor fi suprascrise.\n\nPorniți Auto Cutter acum?",
-    },
-}
-
-
-def tr(language: str, key: str) -> str:
-    return STRINGS.get(language, STRINGS["en"]).get(key, STRINGS["en"].get(key, key))
+def tr(language:str,key:str)->str: return STRINGS.get(language,STRINGS["en"]).get(key,STRINGS["en"].get(key,key))
