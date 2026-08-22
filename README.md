@@ -1,6 +1,6 @@
 # RadioBOSS Toolkit
 
-Version 0.3.0
+Version 0.3.1
 
 A portable launcher for RadioBOSS broadcast, library and synchronization tools.
 
@@ -15,6 +15,8 @@ A portable launcher for RadioBOSS broadcast, library and synchronization tools.
 SongSync can now be started directly from the Toolkit. The SongSync card provides separate actions for **Sync now** and **Setup**, so the synchronization engine and its configuration wizard remain easy to access.
 
 SongSync 1.8.0 uses `config.json` for its runtime configuration and includes the improved SFTP key setup workflow.
+
+Library Cleaner 1.0.1 remembers the last selected SQLite database path and reuses its folder when browsing again. Database passwords are never stored.
 
 ## Languages
 

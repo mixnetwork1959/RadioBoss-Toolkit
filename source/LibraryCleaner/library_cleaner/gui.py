@@ -9,15 +9,17 @@ from .database import MySQLDatabase, SQLiteDatabase
 from .cleaner import clean_orphaned_entries
 from .i18n import text
 from .scanner import scan_libraries
+from .settings import load_settings, save_settings
 from toolkit_common import LANGUAGES, load_toolkit_settings, save_language, toolkit_root
 
 
 class CleanerApp:
     def __init__(self, root: tk.Tk):
         self.root = root
+        self.settings = load_settings()
         self.language = tk.StringVar(value=load_toolkit_settings()["language"])
         self.database_type = tk.StringVar(value="sqlite")
-        self.sqlite_path = tk.StringVar()
+        self.sqlite_path = tk.StringVar(value=str(self.settings.get("sqlite_path", "")))
         self.host = tk.StringVar(value="127.0.0.1")
         self.port = tk.StringVar(value="3306")
         self.database_name = tk.StringVar(value="radioboss")
@@ -28,6 +30,8 @@ class CleanerApp:
         self._build()
         self._translate()
         self._build_menu()
+        self._show_saved_path_status()
+        self.root.protocol("WM_DELETE_WINDOW", self._close)
 
     def _build(self) -> None:
         self.root.geometry("900x600")
@@ -104,6 +108,7 @@ class CleanerApp:
         save_language(language)
         self._translate()
         self._build_menu()
+        self._show_saved_path_status()
 
     def _open_guide(self) -> None:
         guide = toolkit_root() / "help" / f"index_{self.language.get()}.html"
@@ -119,7 +124,7 @@ class CleanerApp:
     def _about(self) -> None:
         messagebox.showinfo(
             text(self.language.get(), "about"),
-            "RadioBOSS Library Cleaner\nVersion 1.0.0\nBuild: 2026-07-31\n\n"
+            "RadioBOSS Library Cleaner\nVersion 1.0.1\nBuild: 2026-08-22\n\n"
             "Created by Raymond Ummels\nDeveloped with assistance from OpenAI ChatGPT\n\n"
             "© 2026 Raymond Ummels\nMIT License",
         )
@@ -146,9 +151,34 @@ class CleanerApp:
             self.mysql_frame.pack(fill="x")
 
     def _browse(self) -> None:
-        path = filedialog.askopenfilename(filetypes=(("SQLite database", "*.db"), ("All files", "*.*")))
+        current = Path(self.sqlite_path.get().strip()) if self.sqlite_path.get().strip() else None
+        initialdir = str(current.parent) if current and current.parent.is_dir() else None
+        options = {
+            "filetypes": (("SQLite database", "*.db"), ("All files", "*.*")),
+        }
+        if initialdir:
+            options["initialdir"] = initialdir
+        path = filedialog.askopenfilename(**options)
         if path:
             self.sqlite_path.set(path)
+            self._save_path()
+
+    def _save_path(self) -> bool:
+        """Persist only the SQLite path; database passwords are never stored."""
+        self.settings["sqlite_path"] = self.sqlite_path.get().strip()
+        if save_settings(self.settings):
+            return True
+        self.status.set(text(self.language.get(), "settings_save_failed"))
+        return False
+
+    def _show_saved_path_status(self) -> None:
+        path = self.sqlite_path.get().strip()
+        if path and not Path(path).is_file():
+            self.status.set(text(self.language.get(), "saved_path_missing", path=path))
+
+    def _close(self) -> None:
+        self._save_path()
+        self.root.destroy()
 
     def _database(self, read_only: bool = True):
         if self.database_type.get() == "sqlite":
@@ -158,6 +188,7 @@ class CleanerApp:
 
     def _scan(self) -> None:
         lang = self.language.get()
+        self._save_path()
         self.scan_button.configure(state="disabled")
         self.status.set(text(lang, "scanning"))
         self.root.update_idletasks()

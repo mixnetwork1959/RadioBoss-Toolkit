@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 0.3.1 – 2026-08-22
+
+### Changed
+
+- Updated the integrated RadioBOSS Library Cleaner to version 1.0.1
+- The Cleaner now remembers the last selected SQLite database path
+- The file chooser reopens in the previously used database folder
+- Missing saved database paths are reported without blocking startup
+- Database passwords remain excluded from saved settings
+
 ## Version 0.3.0 – 2026-08-15
 
 ### Added

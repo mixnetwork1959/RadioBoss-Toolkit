@@ -13,7 +13,7 @@ from tkinter import messagebox, ttk
 from toolkit_common import LANGUAGES, load_toolkit_settings, save_language, toolkit_root, tr
 
 
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 
 
 def application_dir() -> Path:
@@ -106,7 +106,7 @@ class ToolkitApp(tk.Tk):
     def _open_folder(self) -> None: os.startfile(toolkit_root())
 
     def _about(self) -> None:
-        messagebox.showinfo(tr(self.language, "about"), f"RadioBOSS Toolkit\nVersion {VERSION}\nBuild: 2026-08-15\n\nBroadcast Scheduler 4.5.1\nLibrary Cleaner 1.0.0\nSilence Scanner GUI 1.0.0\nAuto Cutter GUI 1.0.0\nSongSync Engine 1.8.0\n\nCreated by Raymond Ummels\nDeveloped with assistance from OpenAI ChatGPT\n\n© 2026 Raymond Ummels\nMIT License")
+        messagebox.showinfo(tr(self.language, "about"), f"RadioBOSS Toolkit\nVersion {VERSION}\nBuild: 2026-08-22\n\nBroadcast Scheduler 4.5.1\nLibrary Cleaner 1.0.1\nSilence Scanner GUI 1.0.0\nAuto Cutter GUI 1.0.0\nSongSync Engine 1.8.0\n\nCreated by Raymond Ummels\nDeveloped with assistance from OpenAI ChatGPT\n\n© 2026 Raymond Ummels\nMIT License")
 
     def _set_icon(self) -> None:
         try: self.iconbitmap(default=str(resource_dir() / "assets" / "radioboss-toolkit.ico"))
