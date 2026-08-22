@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.3.2 – 2026-08-22
+
+### Changed
+
+- Updated the integrated RadioBOSS SongSync Engine to version 1.7.2
+- Prevented the Windows OpenSSH upload process from opening a CMD window
+- Corrected the documented SongSync version and `config.py` filename
+
 ## Version 0.3.1 – 2026-08-22
 
 ### Changed
@@ -14,7 +22,7 @@
 
 ### Added
 
-- Integrated RadioBOSS SongSync Engine 1.8.0 into the Toolkit launcher
+- Integrated RadioBOSS SongSync Engine 1.7.1 into the Toolkit launcher
 - Added separate **Sync now** and **Setup** actions for SongSync
 - Added SongSync descriptions and button labels for all Toolkit interface languages
 - Updated About information and Toolkit layout for the additional tool
@@ -22,7 +30,7 @@
 ### Changed
 
 - Toolkit now groups broadcast, library and synchronization utilities in one portable package
-- Documentation updated for the integrated SongSync workflow and `config.json`
+- Documentation updated for the integrated SongSync workflow and `config.py`
 
 ## Version 0.2.4 – 2026-08-01
 

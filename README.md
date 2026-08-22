@@ -1,6 +1,6 @@
 # RadioBOSS Toolkit
 
-Version 0.3.1
+Version 0.3.2
 
 A portable launcher for RadioBOSS broadcast, library and synchronization tools.
 
@@ -10,11 +10,11 @@ A portable launcher for RadioBOSS broadcast, library and synchronization tools.
 - RadioBOSS Library Cleaner
 - Silence Scanner
 - Auto Cutter
-- RadioBOSS SongSync Engine 1.8.0
+- RadioBOSS SongSync Engine 1.7.2
 
 SongSync can now be started directly from the Toolkit. The SongSync card provides separate actions for **Sync now** and **Setup**, so the synchronization engine and its configuration wizard remain easy to access.
 
-SongSync 1.8.0 uses `config.json` for its runtime configuration and includes the improved SFTP key setup workflow.
+SongSync 1.7.2 uses `config.py` for its runtime configuration and includes the improved SFTP key setup workflow. Windows OpenSSH uploads now run completely in the background without opening a CMD window.
 
 Library Cleaner 1.0.1 remembers the last selected SQLite database path and reuses its folder when browsing again. Database passwords are never stored.
 
