@@ -1,0 +1,6 @@
+RadioBOSS Toolkit - SongSync first run
+
+This package does not contain personal station settings, passwords, private keys, logs or previous exports.
+
+Start RadioBOSS-SongSync-Setup.exe and enter your own RadioBOSS/database/SFTP settings.
+The included config.example.json is only a neutral example and is not an active configuration.
