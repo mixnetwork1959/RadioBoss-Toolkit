@@ -1,0 +1,98 @@
+name: Build RadioBOSS Toolkit v0.4.0
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'launcher.py'
+      - 'toolkit_common.py'
+      - 'source/**'
+      - 'help/**'
+      - 'assets/**'
+      - 'packaging/**'
+      - 'build_toolkit.bat'
+      - '.github/workflows/build-v0.4.0.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Download current SongSync executables
+        shell: powershell
+        run: |
+          $url = 'https://github.com/mixnetwork1959/RadioBOSS-Song-Request-Bundle/releases/download/v1.2.0/RadioBOSS-Song-Request-Bundle-v1.2.0-Shop.zip'
+          Invoke-WebRequest -Uri $url -OutFile songsync-shop.zip
+          Expand-Archive -Path songsync-shop.zip -DestinationPath songsync-shop -Force
+          $sync = Get-ChildItem -Path songsync-shop -Recurse -Filter 'RadioBOSS-SongSync.exe' | Select-Object -First 1
+          $setup = Get-ChildItem -Path songsync-shop -Recurse -Filter 'RadioBOSS-SongSync-Setup.exe' | Select-Object -First 1
+          if (-not $sync -or -not $setup) { throw 'SongSync executables not found in v1.2.0 Shop package.' }
+          New-Item -ItemType Directory -Force -Path 'packaging\SongSync' | Out-Null
+          Copy-Item $sync.FullName 'packaging\SongSync\RadioBOSS-SongSync.exe' -Force
+          Copy-Item $setup.FullName 'packaging\SongSync\RadioBOSS-SongSync-Setup.exe' -Force
+
+      - name: Build Toolkit
+        shell: cmd
+        run: build_toolkit.bat
+
+      - name: Verify clean customer package
+        shell: powershell
+        run: |
+          $root = 'RadioBOSS Toolkit'
+          $forbidden = @(
+            'toolkit_settings.json',
+            'settings.json',
+            'config.json',
+            'config.py',
+            'config.py.bak',
+            'sftp_key',
+            'sftp_key.pub',
+            'sftp_known_hosts',
+            'songsync.log',
+            'setup-debug.log',
+            'silence_report.csv',
+            'cut_report.csv',
+            'public_calendar.json',
+            'BroadcastScheduler.exe'
+          )
+          foreach ($name in $forbidden) {
+            $hit = Get-ChildItem -Path $root -Recurse -File | Where-Object { $_.Name -eq $name }
+            if ($hit) { throw "Forbidden customer-specific/runtime file present: $name" }
+          }
+          if (Test-Path "$root\tools\Broadcast Scheduler") { throw 'Broadcast Scheduler must not be included in Toolkit v0.4.0.' }
+          $required = @(
+            "$root\RadioBOSS Toolkit.exe",
+            "$root\tools\Library Cleaner\RadioBOSS-Library-Cleaner.exe",
+            "$root\tools\Audio Toolkit\SilenceScanner.exe",
+            "$root\tools\Audio Toolkit\AutoCutter.exe",
+            "$root\tools\Audio Toolkit\AutoCutterEngine.exe",
+            "$root\tools\SongSync\RadioBOSS-SongSync.exe",
+            "$root\tools\SongSync\RadioBOSS-SongSync-Setup.exe",
+            "$root\tools\SongSync\config.example.json",
+            "$root\tools\SongSync\FIRST_RUN.txt"
+          )
+          foreach ($item in $required) { if (-not (Test-Path $item)) { throw "Required file missing: $item" } }
+
+      - name: Create customer ZIP and checksum
+        shell: powershell
+        run: |
+          Compress-Archive -Path 'RadioBOSS Toolkit' -DestinationPath 'RadioBOSS-Toolkit-v0.4.0-Freeware.zip' -Force
+          $hash = (Get-FileHash 'RadioBOSS-Toolkit-v0.4.0-Freeware.zip' -Algorithm SHA256).Hash.ToLower()
+          "$hash  RadioBOSS-Toolkit-v0.4.0-Freeware.zip" | Set-Content 'RadioBOSS-Toolkit-v0.4.0-Freeware.sha256.txt'
+
+      - name: Upload customer build
+        uses: actions/upload-artifact@v4
+        with:
+          name: RadioBOSS-Toolkit-v0.4.0-Freeware
+          path: |
+            RadioBOSS-Toolkit-v0.4.0-Freeware.zip
+            RadioBOSS-Toolkit-v0.4.0-Freeware.sha256.txt
+          if-no-files-found: error
