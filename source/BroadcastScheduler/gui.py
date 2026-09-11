@@ -1,12 +1,13 @@
 # ==========================================
 # Broadcast Scheduler
-# Version 4.5.0
+# Version 4.5.1
 # gui.py
 # ==========================================
 
 import tkinter as tk
 from tkinter import ttk
 
+from app_icon import apply_window_icon
 from gui_tree import (
     sort_column,
     populate_tree
@@ -50,6 +51,7 @@ from scheduler_i18n import tr
 def show_events(controller, runtimes, settings):
 
     root = tk.Tk()
+    apply_window_icon(root)
 
     root.title("Broadcast Scheduler 4.5.1")
     root.geometry("1600x900")
@@ -130,7 +132,6 @@ def show_events(controller, runtimes, settings):
         text=tr("calendar")
     )
 
-
     # =====================================================
     # Public Calendar Tab
     # =====================================================
@@ -167,7 +168,6 @@ def show_events(controller, runtimes, settings):
         vsb,
         hsb
     ) = create_treeview(events_tab)
-
 
     # =====================================================
     # Public Calendar
