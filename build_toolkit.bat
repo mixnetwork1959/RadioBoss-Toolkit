@@ -68,7 +68,7 @@ if exist "packaging\SongSync\FIRST_RUN.txt" copy /y "packaging\SongSync\FIRST_RU
 copy /y README.md "RadioBOSS Toolkit\"
 copy /y LICENSE "RadioBOSS Toolkit\"
 mkdir "RadioBOSS Toolkit\help"
-copy /y "help\*.html" "RadioBOSS Toolkit\help\"
+copy /y "help\index_*.html" "RadioBOSS Toolkit\help\"
 
 echo.
 echo Build completed:
