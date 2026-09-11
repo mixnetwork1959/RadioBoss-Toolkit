@@ -9,6 +9,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
+from app_icon import apply_window_icon, set_windows_app_id
 from config import load_settings, save_settings
 from database import Database
 from scheduler_controller import SchedulerController
@@ -33,6 +34,7 @@ def choose_scheduler_file(settings):
         return True
 
     root = tk.Tk()
+    apply_window_icon(root)
     root.withdraw()
     root.update_idletasks()
 
@@ -69,6 +71,8 @@ def choose_scheduler_file(settings):
 
 
 def main():
+
+    set_windows_app_id()
 
     print("=" * 45)
     print(f" Broadcast Scheduler v{VERSION}")
