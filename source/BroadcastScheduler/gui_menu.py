@@ -1,6 +1,6 @@
 # ==========================================
 # Broadcast Scheduler
-# Version 4.4.0
+# Version 4.5.1
 # gui_menu.py
 # ==========================================
 
@@ -33,8 +33,8 @@ def create_menu(
     )
 
     file_menu.add_command(
-    label=tr("refresh"),
-    command=refresh_command
+        label=tr("refresh"),
+        command=refresh_command
     )
 
     file_menu.add_separator()
@@ -88,22 +88,41 @@ def create_menu(
         root.destroy()
 
     for code, label in LANGUAGES.items():
-        language_menu.add_radiobutton(label=label, value=code, variable=language_var,
-            command=lambda value=code: change_language(value))
+        language_menu.add_radiobutton(
+            label=label,
+            value=code,
+            variable=language_var,
+            command=lambda value=code: change_language(value)
+        )
     settings_menu.add_cascade(label=tr("language"), menu=language_menu)
     menubar.add_cascade(label=tr("settings"), menu=settings_menu)
 
     help_menu = tk.Menu(menubar, tearoff=0)
+
     def open_guide():
-        guide = toolkit_root() / "help" / f"index_{load_toolkit_settings()['language']}.html"
-        if guide.is_file(): os.startfile(guide)
-        else: messagebox.showwarning(tr("help"), str(guide))
+        language = load_toolkit_settings()["language"]
+        guide = toolkit_root() / "help" / f"scheduler_{language}.html"
+        if guide.is_file():
+            os.startfile(guide)
+        else:
+            messagebox.showwarning(tr("help"), str(guide))
+
     help_menu.add_command(label=tr("guide"), command=open_guide)
     help_menu.add_command(label=tr("folder"), command=lambda: os.startfile(toolkit_root()))
     help_menu.add_separator()
-    help_menu.add_command(label=tr("about"), command=lambda: messagebox.showinfo(
-        tr("about"), "Broadcast Scheduler\nVersion 4.5.1\nBuild: 2026-07-31\n\n"
-        f"{tr('created')}\n{tr('assistance')}\n\n© 2026 Raymond Ummels\nMIT License"))
+    help_menu.add_command(
+        label=tr("about"),
+        command=lambda: messagebox.showinfo(
+            tr("about"),
+            "RadioBOSS Broadcast Scheduler\n"
+            "Version 4.5.1\n"
+            "Build: 2026-09-11\n\n"
+            "Freeware / Free Download\n\n"
+            f"{tr('created')}\n{tr('assistance')}\n\n"
+            "© 2026 Raymond Ummels\n"
+            "MIT License"
+        )
+    )
     menubar.add_cascade(label=tr("help"), menu=help_menu)
 
     root.config(menu=menubar)
