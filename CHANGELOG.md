@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 0.4.0 – 2026-09-11
+
+### Changed
+
+- Broadcast Scheduler removed from the Toolkit package and launcher
+- Broadcast Scheduler will be distributed separately as a freeware product
+- Toolkit window now opens centered on the monitor currently in use
+- Launcher layout changed to a clean 2 × 2 grid
+- SongSync card now uses two equal-width buttons for **Sync now** and **Setup**
+- Toolkit is explicitly presented as a free download / freeware package
+- Windows build script no longer bundles Broadcast Scheduler
+- Added separate standalone Broadcast Scheduler build workflow
+
 ## Version 0.3.2 – 2026-08-22
 
 ### Changed
