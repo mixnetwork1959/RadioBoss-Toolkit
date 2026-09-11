@@ -1,0 +1,55 @@
+name: Build RadioBOSS Broadcast Scheduler 4.5.1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'source/BroadcastScheduler/**'
+      - 'help/scheduler_*.html'
+      - 'BROADCAST_SCHEDULER_README.md'
+      - 'build_broadcast_scheduler.bat'
+      - '.github/workflows/build-broadcast-scheduler.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build standalone Scheduler
+        shell: cmd
+        run: build_broadcast_scheduler.bat
+
+      - name: Verify clean package
+        shell: powershell
+        run: |
+          $root = 'RadioBOSS Broadcast Scheduler'
+          if (!(Test-Path "$root\RadioBOSS Broadcast Scheduler.exe")) { throw 'Scheduler EXE missing' }
+          $forbidden = @('settings.json','config.json','config.py','*.log','*.sdl')
+          foreach ($pattern in $forbidden) {
+            $hits = Get-ChildItem $root -Recurse -File -Filter $pattern -ErrorAction SilentlyContinue
+            if ($hits) { throw "Forbidden customer/runtime file found: $($hits.FullName -join ', ')" }
+          }
+
+      - name: Create ZIP and checksum
+        shell: powershell
+        run: |
+          $zip = 'RadioBOSS-Broadcast-Scheduler-v4.5.1-Freeware.zip'
+          Compress-Archive -Path 'RadioBOSS Broadcast Scheduler' -DestinationPath $zip -Force
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
+          "$hash  $zip" | Set-Content 'RadioBOSS-Broadcast-Scheduler-v4.5.1-Freeware.sha256.txt' -Encoding ascii
+
+      - name: Upload customer build
+        uses: actions/upload-artifact@v4
+        with:
+          name: RadioBOSS-Broadcast-Scheduler-v4.5.1-Freeware
+          path: |
+            RadioBOSS-Broadcast-Scheduler-v4.5.1-Freeware.zip
+            RadioBOSS-Broadcast-Scheduler-v4.5.1-Freeware.sha256.txt
+          if-no-files-found: error
