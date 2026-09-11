@@ -36,11 +36,11 @@ echo Build completed:
 echo %CD%\RadioBOSS Broadcast Scheduler
 echo.
 echo This is the standalone freeware package.
-pause
+if not defined CI pause
 exit /b 0
 
 :error
 echo.
 echo BUILD FAILED.
-pause
+if not defined CI pause
 exit /b 1
