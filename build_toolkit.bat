@@ -58,11 +58,12 @@ copy /y "dist\AutoCutterEngine.exe" "RadioBOSS Toolkit\tools\Audio Toolkit\"
 copy /y "dist\RadioBOSS-Library-Cleaner.exe" "RadioBOSS Toolkit\tools\Library Cleaner\"
 
 rem SongSync is distributed with the Toolkit but built separately.
-rem Place the two current SongSync executables in packaging\SongSync before building.
 if not exist "packaging\SongSync\RadioBOSS-SongSync.exe" goto :songsync_missing
 if not exist "packaging\SongSync\RadioBOSS-SongSync-Setup.exe" goto :songsync_missing
 copy /y "packaging\SongSync\RadioBOSS-SongSync.exe" "RadioBOSS Toolkit\tools\SongSync\"
 copy /y "packaging\SongSync\RadioBOSS-SongSync-Setup.exe" "RadioBOSS Toolkit\tools\SongSync\"
+if exist "packaging\SongSync\config.example.json" copy /y "packaging\SongSync\config.example.json" "RadioBOSS Toolkit\tools\SongSync\"
+if exist "packaging\SongSync\FIRST_RUN.txt" copy /y "packaging\SongSync\FIRST_RUN.txt" "RadioBOSS Toolkit\tools\SongSync\"
 
 copy /y README.md "RadioBOSS Toolkit\"
 copy /y LICENSE "RadioBOSS Toolkit\"
@@ -75,7 +76,7 @@ echo %CD%\RadioBOSS Toolkit
 echo.
 echo Broadcast Scheduler is not included in this package.
 echo Build it separately with build_broadcast_scheduler.bat
-pause
+if not defined CI pause
 exit /b 0
 
 :songsync_missing
@@ -92,5 +93,5 @@ goto :error
 :error
 echo.
 echo BUILD FAILED.
-pause
+if not defined CI pause
 exit /b 1
