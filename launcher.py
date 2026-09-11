@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ctypes
 import os
 import subprocess
 import sys
@@ -13,7 +14,9 @@ from tkinter import messagebox, ttk
 from toolkit_common import LANGUAGES, load_toolkit_settings, save_language, toolkit_root, tr
 
 
-VERSION = "0.3.2"
+VERSION = "0.4.0"
+WINDOW_WIDTH = 760
+WINDOW_HEIGHT = 600
 
 
 def application_dir() -> Path:
@@ -32,7 +35,6 @@ AUDIO_DIR = TOOLS_DIR / "Audio Toolkit"
 SCAN_REPORT = AUDIO_DIR / "silence_report.csv"
 
 PROGRAMS = {
-    "scheduler": TOOLS_DIR / "Broadcast Scheduler" / "BroadcastScheduler.exe",
     "cleaner": TOOLS_DIR / "Library Cleaner" / "RadioBOSS-Library-Cleaner.exe",
     "scanner": AUDIO_DIR / "SilenceScanner.exe",
     "cutter": AUDIO_DIR / "AutoCutter.exe",
@@ -53,13 +55,21 @@ def resolve_program(key: str) -> Path:
 def launch_program(key: str) -> None:
     executable = resolve_program(key)
     if not executable.is_file():
-        messagebox.showerror("Program not found", f"The program could not be found:\n\n{executable}\n\nPlease keep the complete RadioBOSS Toolkit folder together.")
+        messagebox.showerror(
+            "Program not found",
+            f"The program could not be found:\n\n{executable}\n\n"
+            "Please keep the complete RadioBOSS Toolkit folder together.",
+        )
         return
     if key == "cutter" and not confirm_cutter():
         return
     try:
         creation_flags = subprocess.CREATE_NEW_CONSOLE if os.name == "nt" else 0
-        subprocess.Popen([str(executable)], cwd=str(executable.parent), creationflags=creation_flags)
+        subprocess.Popen(
+            [str(executable)],
+            cwd=str(executable.parent),
+            creationflags=creation_flags,
+        )
     except OSError as error:
         messagebox.showerror("Unable to start program", str(error))
 
@@ -71,62 +81,242 @@ def confirm_cutter() -> bool:
         return False
     modified = datetime.fromtimestamp(SCAN_REPORT.stat().st_mtime)
     timestamp = modified.strftime("%Y-%m-%d %H:%M")
-    return messagebox.askyesno(tr(lang, "cutter_title"), tr(lang, "cutter_confirm").format(timestamp=timestamp), icon="warning")
+    return messagebox.askyesno(
+        tr(lang, "cutter_title"),
+        tr(lang, "cutter_confirm").format(timestamp=timestamp),
+        icon="warning",
+    )
 
 
 class ToolkitApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title(f"RadioBOSS Toolkit v{VERSION}")
-        self.geometry("760x680")
-        self.minsize(680, 600)
+        self.minsize(680, 540)
         self.configure(bg="#eef2f7")
         self.language = load_toolkit_settings()["language"]
         self.language_var = tk.StringVar(value=self.language)
-        self._set_icon(); self._build_styles(); self._build_menu(); self._build_ui()
+        self._set_icon()
+        self._build_styles()
+        self._build_menu()
+        self._build_ui()
+        self._center_on_current_monitor(WINDOW_WIDTH, WINDOW_HEIGHT)
 
     def _build_menu(self) -> None:
-        menu = tk.Menu(self); settings_menu = tk.Menu(menu, tearoff=False); language_menu = tk.Menu(settings_menu, tearoff=False)
+        menu = tk.Menu(self)
+        settings_menu = tk.Menu(menu, tearoff=False)
+        language_menu = tk.Menu(settings_menu, tearoff=False)
         for code, label in LANGUAGES.items():
-            language_menu.add_radiobutton(label=label, value=code, variable=self.language_var, command=lambda value=code: self._set_language(value))
-        settings_menu.add_cascade(label=tr(self.language, "language"), menu=language_menu); menu.add_cascade(label=tr(self.language, "settings"), menu=settings_menu)
-        help_menu = tk.Menu(menu, tearoff=False); help_menu.add_command(label=tr(self.language, "user_guide"), command=self._open_guide); help_menu.add_command(label=tr(self.language, "open_folder"), command=self._open_folder); help_menu.add_separator(); help_menu.add_command(label=tr(self.language, "about"), command=self._about); menu.add_cascade(label=tr(self.language, "help"), menu=help_menu); self.configure(menu=menu)
+            language_menu.add_radiobutton(
+                label=label,
+                value=code,
+                variable=self.language_var,
+                command=lambda value=code: self._set_language(value),
+            )
+        settings_menu.add_cascade(label=tr(self.language, "language"), menu=language_menu)
+        menu.add_cascade(label=tr(self.language, "settings"), menu=settings_menu)
+
+        help_menu = tk.Menu(menu, tearoff=False)
+        help_menu.add_command(label=tr(self.language, "user_guide"), command=self._open_guide)
+        help_menu.add_command(label=tr(self.language, "open_folder"), command=self._open_folder)
+        help_menu.add_separator()
+        help_menu.add_command(label=tr(self.language, "about"), command=self._about)
+        menu.add_cascade(label=tr(self.language, "help"), menu=help_menu)
+        self.configure(menu=menu)
 
     def _set_language(self, language: str) -> None:
-        self.language = language; self.language_var.set(language); save_language(language)
-        for child in self.winfo_children(): child.destroy()
-        self._build_menu(); self._build_ui()
+        self.language = language
+        self.language_var.set(language)
+        save_language(language)
+        for child in self.winfo_children():
+            child.destroy()
+        self._build_menu()
+        self._build_ui()
 
     def _open_guide(self) -> None:
         filename = f"index_{self.language}.html"
-        for guide in (toolkit_root() / "help" / filename, resource_dir() / "help" / filename):
-            if guide.is_file(): os.startfile(guide); return
+        for guide in (
+            toolkit_root() / "help" / filename,
+            resource_dir() / "help" / filename,
+        ):
+            if guide.is_file():
+                os.startfile(guide)
+                return
         messagebox.showwarning(tr(self.language, "help"), tr(self.language, "guide_missing"))
 
-    def _open_folder(self) -> None: os.startfile(toolkit_root())
+    def _open_folder(self) -> None:
+        os.startfile(toolkit_root())
 
     def _about(self) -> None:
-        messagebox.showinfo(tr(self.language, "about"), f"RadioBOSS Toolkit\nVersion {VERSION}\nBuild: 2026-08-22\n\nBroadcast Scheduler 4.5.1\nLibrary Cleaner 1.0.1\nSilence Scanner GUI 1.0.0\nAuto Cutter GUI 1.0.0\nSongSync Engine 1.7.2\n\nCreated by Raymond Ummels\nDeveloped with assistance from OpenAI ChatGPT\n\n© 2026 Raymond Ummels\nMIT License")
+        messagebox.showinfo(
+            tr(self.language, "about"),
+            "RadioBOSS Toolkit\n"
+            f"Version {VERSION}\n"
+            "Build: 2026-09-11\n\n"
+            "Library Cleaner 1.0.1\n"
+            "Silence Scanner GUI 1.0.0\n"
+            "Auto Cutter GUI 1.0.0\n"
+            "SongSync Engine 1.7.2\n\n"
+            "Broadcast Scheduler is now distributed separately as freeware.\n\n"
+            "Created by Raymond Ummels\n"
+            "Developed with assistance from OpenAI ChatGPT\n\n"
+            "© 2026 Raymond Ummels\n"
+            "MIT License",
+        )
 
     def _set_icon(self) -> None:
-        try: self.iconbitmap(default=str(resource_dir() / "assets" / "radioboss-toolkit.ico"))
-        except tk.TclError: pass
+        try:
+            self.iconbitmap(default=str(resource_dir() / "assets" / "radioboss-toolkit.ico"))
+        except tk.TclError:
+            pass
 
     def _build_styles(self) -> None:
-        style = ttk.Style(self); style.theme_use("clam"); style.configure("App.TFrame", background="#eef2f7"); style.configure("Title.TLabel", font=("Segoe UI", 24, "bold"), foreground="#07153d", background="#eef2f7"); style.configure("Sub.TLabel", font=("Segoe UI", 11), foreground="#526176", background="#eef2f7"); style.configure("Card.TFrame", background="white", relief="solid", borderwidth=1); style.configure("CardTitle.TLabel", font=("Segoe UI", 14, "bold"), foreground="#07153d", background="white"); style.configure("CardText.TLabel", font=("Segoe UI", 9), foreground="#526176", background="white"); style.configure("Tool.TButton", font=("Segoe UI", 10, "bold"), padding=(18, 9)); style.map("Tool.TButton", background=[("active", "#ffb563"), ("!disabled", "#ff9f43")], foreground=[("!disabled", "#07153d")])
+        style = ttk.Style(self)
+        style.theme_use("clam")
+        style.configure("App.TFrame", background="#eef2f7")
+        style.configure(
+            "Title.TLabel",
+            font=("Segoe UI", 24, "bold"),
+            foreground="#07153d",
+            background="#eef2f7",
+        )
+        style.configure(
+            "Sub.TLabel",
+            font=("Segoe UI", 11),
+            foreground="#526176",
+            background="#eef2f7",
+        )
+        style.configure("Card.TFrame", background="white", relief="solid", borderwidth=1)
+        style.configure(
+            "CardTitle.TLabel",
+            font=("Segoe UI", 14, "bold"),
+            foreground="#07153d",
+            background="white",
+        )
+        style.configure(
+            "CardText.TLabel",
+            font=("Segoe UI", 9),
+            foreground="#526176",
+            background="white",
+        )
+        style.configure("Tool.TButton", font=("Segoe UI", 10, "bold"), padding=(18, 9))
+        style.map(
+            "Tool.TButton",
+            background=[("active", "#ffb563"), ("!disabled", "#ff9f43")],
+            foreground=[("!disabled", "#07153d")],
+        )
 
     def _build_ui(self) -> None:
-        header = ttk.Frame(self, style="App.TFrame"); header.pack(fill="x", padx=34, pady=(28, 18)); ttk.Label(header, text="RadioBOSS Toolkit", style="Title.TLabel").pack(anchor="w"); ttk.Label(header, text=tr(self.language, "tagline"), style="Sub.TLabel").pack(anchor="w", pady=(2, 0))
-        grid = ttk.Frame(self, style="App.TFrame"); grid.pack(fill="both", expand=True, padx=28, pady=4); grid.columnconfigure((0, 1), weight=1, uniform="cards"); grid.rowconfigure((0, 1, 2), weight=1, uniform="cards")
-        cards = [(tr(self.language, "scheduler"), tr(self.language, "scheduler_desc"), "scheduler"), (tr(self.language, "cleaner"), tr(self.language, "cleaner_desc"), "cleaner"), (tr(self.language, "scanner"), tr(self.language, "scanner_desc"), "scanner"), (tr(self.language, "cutter"), tr(self.language, "cutter_desc"), "cutter"), (tr(self.language, "songsync"), tr(self.language, "songsync_desc"), "songsync")]
-        for index, (title, description, key) in enumerate(cards): self._card(grid, index // 2, index % 2, title, description, key)
-        ttk.Label(self, text=f"Version {VERSION}  •  {tr(self.language, 'portable')}", style="Sub.TLabel").pack(pady=(12, 18))
+        header = ttk.Frame(self, style="App.TFrame")
+        header.pack(fill="x", padx=34, pady=(28, 18))
+        ttk.Label(header, text="RadioBOSS Toolkit", style="Title.TLabel").pack(anchor="w")
+        ttk.Label(header, text=tr(self.language, "tagline"), style="Sub.TLabel").pack(
+            anchor="w", pady=(2, 0)
+        )
+
+        grid = ttk.Frame(self, style="App.TFrame")
+        grid.pack(fill="both", expand=True, padx=28, pady=4)
+        grid.columnconfigure((0, 1), weight=1, uniform="cards")
+        grid.rowconfigure((0, 1), weight=1, uniform="cards")
+
+        cards = [
+            (tr(self.language, "cleaner"), tr(self.language, "cleaner_desc"), "cleaner"),
+            (tr(self.language, "scanner"), tr(self.language, "scanner_desc"), "scanner"),
+            (tr(self.language, "cutter"), tr(self.language, "cutter_desc"), "cutter"),
+            (tr(self.language, "songsync"), tr(self.language, "songsync_desc"), "songsync"),
+        ]
+        for index, (title, description, key) in enumerate(cards):
+            self._card(grid, index // 2, index % 2, title, description, key)
+
+        ttk.Label(
+            self,
+            text=f"Version {VERSION}  •  {tr(self.language, 'portable')}  •  Freeware",
+            style="Sub.TLabel",
+        ).pack(pady=(12, 18))
 
     def _card(self, parent, row, column, title, description, key) -> None:
-        card = ttk.Frame(parent, style="Card.TFrame", padding=20); card.grid(row=row, column=column, sticky="nsew", padx=7, pady=7); ttk.Label(card, text=title, style="CardTitle.TLabel").pack(anchor="w"); ttk.Label(card, text=description, style="CardText.TLabel", wraplength=270, justify="left").pack(anchor="w", pady=(8, 18))
+        card = ttk.Frame(parent, style="Card.TFrame", padding=20)
+        card.grid(row=row, column=column, sticky="nsew", padx=7, pady=7)
+        ttk.Label(card, text=title, style="CardTitle.TLabel").pack(anchor="w")
+        ttk.Label(
+            card,
+            text=description,
+            style="CardText.TLabel",
+            wraplength=270,
+            justify="left",
+        ).pack(anchor="w", pady=(8, 18))
+
         if key == "songsync":
-            buttons = ttk.Frame(card, style="Card.TFrame"); buttons.pack(anchor="w", side="bottom"); ttk.Button(buttons, text=tr(self.language, "sync_now"), style="Tool.TButton", command=lambda: launch_program("songsync")).pack(side="left"); ttk.Button(buttons, text=tr(self.language, "setup"), style="Tool.TButton", command=lambda: launch_program("songsync_setup")).pack(side="left", padx=(8, 0))
-        else: ttk.Button(card, text=tr(self.language, "open"), style="Tool.TButton", command=lambda: launch_program(key)).pack(anchor="w", side="bottom")
+            buttons = ttk.Frame(card, style="Card.TFrame")
+            buttons.pack(fill="x", side="bottom")
+            buttons.columnconfigure((0, 1), weight=1, uniform="songsync_buttons")
+            ttk.Button(
+                buttons,
+                text=tr(self.language, "sync_now"),
+                style="Tool.TButton",
+                command=lambda: launch_program("songsync"),
+            ).grid(row=0, column=0, sticky="ew", padx=(0, 4))
+            ttk.Button(
+                buttons,
+                text=tr(self.language, "setup"),
+                style="Tool.TButton",
+                command=lambda: launch_program("songsync_setup"),
+            ).grid(row=0, column=1, sticky="ew", padx=(4, 0))
+        else:
+            ttk.Button(
+                card,
+                text=tr(self.language, "open"),
+                style="Tool.TButton",
+                command=lambda: launch_program(key),
+            ).pack(anchor="w", side="bottom")
+
+    def _center_on_current_monitor(self, width: int, height: int) -> None:
+        """Center the window on the monitor where the mouse pointer is located."""
+        self.update_idletasks()
+        left = 0
+        top = 0
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        if os.name == "nt":
+            try:
+                class POINT(ctypes.Structure):
+                    _fields_ = [("x", ctypes.c_long), ("y", ctypes.c_long)]
+
+                class RECT(ctypes.Structure):
+                    _fields_ = [
+                        ("left", ctypes.c_long),
+                        ("top", ctypes.c_long),
+                        ("right", ctypes.c_long),
+                        ("bottom", ctypes.c_long),
+                    ]
+
+                class MONITORINFO(ctypes.Structure):
+                    _fields_ = [
+                        ("cbSize", ctypes.c_ulong),
+                        ("rcMonitor", RECT),
+                        ("rcWork", RECT),
+                        ("dwFlags", ctypes.c_ulong),
+                    ]
+
+                point = POINT()
+                ctypes.windll.user32.GetCursorPos(ctypes.byref(point))
+                monitor = ctypes.windll.user32.MonitorFromPoint(point, 2)
+                info = MONITORINFO()
+                info.cbSize = ctypes.sizeof(MONITORINFO)
+                if ctypes.windll.user32.GetMonitorInfoW(monitor, ctypes.byref(info)):
+                    work = info.rcWork
+                    left = work.left
+                    top = work.top
+                    screen_width = work.right - work.left
+                    screen_height = work.bottom - work.top
+            except (AttributeError, OSError):
+                pass
+
+        x = left + max(0, (screen_width - width) // 2)
+        y = top + max(0, (screen_height - height) // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
 
 
-if __name__ == "__main__": ToolkitApp().mainloop()
+if __name__ == "__main__":
+    ToolkitApp().mainloop()
