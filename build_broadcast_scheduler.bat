@@ -20,6 +20,7 @@ py -m PyInstaller --noconfirm --clean --onefile --windowed ^
   --icon "assets\radioboss-toolkit.ico" ^
   --paths "." ^
   --paths "source" ^
+  --add-data "assets\radioboss-toolkit.ico;assets" ^
   --add-data "source\BroadcastScheduler\templates;templates" ^
   "source\BroadcastScheduler\scheduler.py"
 if errorlevel 1 goto :error
